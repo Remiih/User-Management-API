@@ -1,0 +1,58 @@
+@UserManagementAPI_HostAddress = http://localhost:5264
+
+### Test 1: Get users without token (should return 401)
+GET {{UserManagementAPI_HostAddress}}/users
+Accept: application/json
+
+### Test 2: Get users with invalid token (should return 401)
+GET {{UserManagementAPI_HostAddress}}/users
+Accept: application/json
+Authorization: Bearer invalid-token-123
+
+### Test 3: Get users with valid token (should return 200)
+GET {{UserManagementAPI_HostAddress}}/users
+Accept: application/json
+Authorization: Bearer valid-token
+
+### Test 4: Trigger exception with valid token (invalid page parameter)
+GET {{UserManagementAPI_HostAddress}}/users?page=invalid
+Accept: application/json
+Authorization: Bearer valid-token
+
+### Test 5: Create user with valid token
+POST {{UserManagementAPI_HostAddress}}/users
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer valid-token
+
+{
+    "name": "John Doe",
+    "email": "john.doe@example.com"
+}
+
+### Test 6: Create invalid user with valid token (validation error)
+POST {{UserManagementAPI_HostAddress}}/users
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer valid-token
+
+{
+    "name": "J",
+    "email": "invalid-email"
+}
+
+### Test 7: Update non-existent user (should trigger 404)
+PUT {{UserManagementAPI_HostAddress}}/users/999
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer valid-token
+
+{
+    "name": "John Updated",
+    "email": "john.updated@example.com"
+}
+
+### Test 8: Delete non-existent user (should trigger 404)
+DELETE {{UserManagementAPI_HostAddress}}/users/999
+Accept: application/json
+Authorization: Bearer valid-token
